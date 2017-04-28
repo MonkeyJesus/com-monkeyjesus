@@ -81,27 +81,26 @@ public class CollectorUtil {
      * List<Map> --> List<Bean>
      * 利用Introspector,PropertyDescriptor实现 List<Map> --> List<Bean>
      * @param mapList
-     * @param objectList
+     * @param clzssName
      * @return
      */
-    public static void transMapList2BeanList(List<Map<String,Object>> mapList, List<Object> objectList){
-        if (objectList.size() < mapList.size()){
-            return;
+    public static List<Object> transMapList2BeanListByClassName(List<Map<String,Object>> mapList, String clzssName){
+        try {
+            Class clzss = Class.forName(clzssName);
+            List<Object> returnList = new ArrayList<Object>();
+            for (Map<String, Object> map : mapList) {
+                Object object = clzss.newInstance();
+                transMap2Bean(map,object);
+                returnList.add(object);
+            }
+            return returnList;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
-        for (int i = 0 ; i < mapList.size() ; i ++) {
-            transMap2Bean(mapList.get(i),objectList.get(i));
-        }
-    }
-
-    public static List<Class> transMapList2BeanListByClassName(List<Map<String,Object>> mapList, String clzssName){
-        Class clzss = Class.forName(clzssName);
-        List<Class> returnList = new ArrayList<Class>();
-        for (Map<String, Object> map : mapList) {
-            Object object = clzss.newInstance();
-            transMap2Bean(map,object);
-            returnList.add(object);
-        }
-
         return null;
     }
 
@@ -126,17 +125,18 @@ public class CollectorUtil {
 
         String clzssName = Picture.class.getCanonicalName();
 
-        try {
-            Class clzss = Class.forName(clzssName);
-            Object o = clzss.newInstance();
-            System.out.println(o.getClass());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        System.out.println(transMapList2BeanListByClassName(mapList,Picture.class.getName()));
+//        try {
+////            Class clzss = Class.forName(clzssName);
+////            Object o = clzss.newInstance();
+////            System.out.println(o.getClass());
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
 
 
 
